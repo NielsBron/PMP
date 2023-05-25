@@ -9,10 +9,11 @@ public class GenerationManager : MonoBehaviour
     [SerializeField] Transform WorldGrid;
     [SerializeField] List<GameObject> RoomTypes;
     [SerializeField] int mapSize = 16; // Size of map
-    [SerializeField] Slider MapSizeSlider;
+    [SerializeField] Slider MapSizeSlider, EmptinessSlider;
     [SerializeField] Button GenerateButton;
+    [SerializeField] GameObject E_Room;
 
-
+    public int mapEmpitiness; // change of empty room
     private int mapSizeSqr; // Square root mapSize
     private float currentPosX, currentposZ, currentPosTracker; // These will keep track of our position of the room to be generated
     private float roomSize = 7;
@@ -23,6 +24,8 @@ public class GenerationManager : MonoBehaviour
         mapSize = (int)Mathf.Pow(MapSizeSlider.value, 4);
 
         mapSizeSqr = (int)Mathf.Sqrt(mapSize);
+
+        mapEmpitiness = (int)EmptinessSlider.value;
     }
     public void ReloadWorld() // Reload world
     {
@@ -31,6 +34,11 @@ public class GenerationManager : MonoBehaviour
 
     public void GenerateWorld() // Creates world
     {
+        for (int i = 0; i < mapEmpitiness; i++)
+        {
+            RoomTypes.Add(E_Room); // Adds empty rooms to the RoomType array
+        }
+
         GenerateButton.interactable = false;
         for (int i = 0; i < mapSize; i++)
         {
@@ -43,7 +51,7 @@ public class GenerationManager : MonoBehaviour
             }
 
             currentPos = new(currentPosX, 0, currentposZ);
-
+            
             Instantiate(RoomTypes[Random.Range(0, RoomTypes.Count)], currentPos, Quaternion.identity, WorldGrid); // Instantiates the current room type at the currenPos
 
             currentPosTracker++; // Keeps track of the position X, without using the room size
