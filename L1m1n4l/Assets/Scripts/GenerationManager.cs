@@ -4,20 +4,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+public enum GenerationState
+{
+    Idle,
+    GeneratingRooms,
+    GeneratingLighting,
+
+    GeneratingSpawn,
+    GeneratingExit
+}
+
 public class GenerationManager : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] Transform WorldGrid;
-    [SerializeField] List<GameObject> RoomTypes;
+    [SerializeField] List<GameObject> RoomTypes; // prefabs rooms
+    [SerializeField] List<GameObject> LightTypes; // prefabs lights
     [SerializeField] int mapSize = 16; // Size of map
-    [SerializeField] Slider MapSizeSlider, EmptinessSlider;
+    [SerializeField] Slider MapSizeSlider, EmptinessSlider, BrightnessSlider;
     [SerializeField] Button GenerateButton;
     [SerializeField] GameObject E_Room;
+    [SerializeField] GameObject SpawnRoom, ExitRoom;
 
-    public int mapEmpitiness; // change of empty room
+    public List<GameObject> GeneratedRooms; // Storing the rooms that were already generated
+
+    [Header("Settings")]
+    public int mapEmpitiness; // chance of empty room
+    public int mapBrightness; // chance of light type spawning in
     private int mapSizeSqr; // Square root mapSize
-    private float currentPosX, currentposZ, currentPosTracker; // These will keep track of our position of the room to be generated
+    private float currentPosX, currentPosZ, currentPosTracker; // These will keep track of our position of the room to be generated
     private float roomSize = 7;
     private Vector3 currentPos; // The current position of the room to be generated
+    public GenerationState currentState; // the current state of generation
 
     private void Update() 
     {
@@ -26,6 +44,8 @@ public class GenerationManager : MonoBehaviour
         mapSizeSqr = (int)Mathf.Sqrt(mapSize);
 
         mapEmpitiness = (int)EmptinessSlider.value;
+
+        mapBrightness = (int)BrightnessSlider.value;
     }
     public void ReloadWorld() // Reload world
     {
@@ -40,22 +60,76 @@ public class GenerationManager : MonoBehaviour
         }
 
         GenerateButton.interactable = false;
-        for (int i = 0; i < mapSize; i++)
+
+        for (int state = 0; state < 5; state++)
         {
-            if (currentPosTracker == mapSizeSqr) // Move the position back to the beginning of the grid, so it can go upwards
+            for (int i = 0; i < mapSize; i++)
             {
-                currentPosX = 0;
-                currentPosTracker = 0;
-                
-                currentposZ += roomSize;
-            }
+                if (currentPosTracker == mapSizeSqr) // Move the position back to the beginning of the grid, so it can go upwards
+                {
+                    currentPosX = 0;
+                    currentPosTracker = 0;
 
-            currentPos = new(currentPosX, 0, currentposZ);
+                    currentPosZ += roomSize;
+                }
+
+                currentPos = new(currentPosX, 0, currentPosZ);
             
-            Instantiate(RoomTypes[Random.Range(0, RoomTypes.Count)], currentPos, Quaternion.identity, WorldGrid); // Instantiates the current room type at the currenPos
+                switch (currentState) {
+                    
+                    case GenerationState.GeneratingRooms:
+                        GeneratedRooms.Add(Instantiate(RoomTypes[Random.Range(0, RoomTypes.Count)], currentPos, Quaternion.identity, WorldGrid)); // Instantiates the current room type at the currenPos
+                    break;
+                    
+                    case GenerationState.GeneratingLighting:
+                        int lightSpawn = Random.Range(-1, mapBrightness);
 
-            currentPosTracker++; // Keeps track of the position X, without using the room size
-            currentPosX += roomSize; // Adds more position to the currenPosX, which makes it go to the right a bit more
+                        if(lightSpawn == 0)
+                        Instantiate(LightTypes[Random.Range(0, LightTypes.Count)], currentPos, Quaternion.identity, WorldGrid); // Instantiates the current room type at the currenPos
+                    break;
+                }
+                currentPosTracker++; // Keeps track of the position X, without using the room size
+                currentPosX += roomSize; // Adds more position to the currenPosX, which makes it go to the right a bit more
+            }
+            NextState();
+
+            switch(currentState)
+            {
+                case GenerationState.GeneratingExit:
+
+                    int roomToReplace = Random.Range(0, GeneratedRooms.Count);
+
+                    GameObject exitRoom = Instantiate(ExitRoom, GeneratedRooms[roomToReplace].transform.position, Quaternion.identity, WorldGrid);
+
+                    Destroy(GeneratedRooms[roomToReplace]);
+
+                    GeneratedRooms[roomToReplace] = exitRoom;
+                    
+                    break;
+                
+                case GenerationState.GeneratingSpawn:
+
+                    int _roomToReplace = Random.Range(0, GeneratedRooms.Count);
+                    
+                    GameObject spawnRoom = Instantiate(SpawnRoom, GeneratedRooms[_roomToReplace].transform.position, Quaternion.identity, WorldGrid);
+
+                    Destroy(GeneratedRooms[_roomToReplace]);
+
+                    GeneratedRooms[_roomToReplace] = spawnRoom;
+                   
+                    break;
+            }
         }
+    }
+
+    public void NextState()
+    {
+        currentState++; // Goes to the next state
+
+        // Resetting our variables
+        currentPosX = 0;
+        currentPosZ = 0;
+        currentPosTracker = 0;
+        currentPos = Vector3.zero;
     }
 }

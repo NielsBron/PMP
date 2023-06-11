@@ -119,6 +119,13 @@ public class FirstPersonController : MonoBehaviour
 
             ApplyFinalMovements();
         }
+            
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            gameObject.GetComponent<FirstPersonController>().enabled = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     private void HandleMovementInput()
