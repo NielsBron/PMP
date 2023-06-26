@@ -11,7 +11,9 @@ public enum GenerationState
     GeneratingLighting,
 
     GeneratingSpawn,
-    GeneratingExit
+    GeneratingExit,
+
+    GeneratingBarrier
 }
 
 public class GenerationManager : MonoBehaviour
@@ -24,16 +26,20 @@ public class GenerationManager : MonoBehaviour
     [SerializeField] Slider MapSizeSlider, EmptinessSlider, BrightnessSlider;
     [SerializeField] Button GenerateButton;
     [SerializeField] GameObject E_Room;
+    [SerializeField] GameObject B_Room; // Barrier room type
     [SerializeField] GameObject SpawnRoom, ExitRoom;
 
     public List<GameObject> GeneratedRooms; // Storing the rooms that were already generated
+
+    [SerializeField] GameObject PlayerObject, MainCameraObject;
+    [SerializeField] GameObject PlayerCanvas, MainCanvas;
 
     [Header("Settings")]
     public int mapEmpitiness; // chance of empty room
     public int mapBrightness; // chance of light type spawning in
     private int mapSizeSqr; // Square root mapSize
-    private float currentPosX, currentPosZ, currentPosTracker; // These will keep track of our position of the room to be generated
-    private float roomSize = 7;
+    private float currentPosX, currentPosZ, currentPosTracker, currentRoom; // These will keep track of our position of the room to be generated
+    public float roomSize = 7;
     private Vector3 currentPos; // The current position of the room to be generated
     public GenerationState currentState; // the current state of generation
 
@@ -61,16 +67,20 @@ public class GenerationManager : MonoBehaviour
 
         GenerateButton.interactable = false;
 
-        for (int state = 0; state < 5; state++)
+        for (int state = 0; state < 6; state++)
         {
             for (int i = 0; i < mapSize; i++)
             {
                 if (currentPosTracker == mapSizeSqr) // Move the position back to the beginning of the grid, so it can go upwards
                 {
+                    if(currentState == GenerationState.GeneratingBarrier) GenerateBarrier(); // Right
+                    
                     currentPosX = 0;
                     currentPosTracker = 0;
 
                     currentPosZ += roomSize;
+                    
+                    if(currentState == GenerationState.GeneratingBarrier) GenerateBarrier(); // Left
                 }
 
                 currentPos = new(currentPosX, 0, currentPosZ);
@@ -87,7 +97,21 @@ public class GenerationManager : MonoBehaviour
                         if(lightSpawn == 0)
                         Instantiate(LightTypes[Random.Range(0, LightTypes.Count)], currentPos, Quaternion.identity, WorldGrid); // Instantiates the current room type at the currenPos
                     break;
+
+                    case GenerationState.GeneratingBarrier:
+                    
+                    if (currentRoom <= mapSizeSqr && currentRoom >= 0)
+                    {
+                        GenerateBarrier(); // Bottom of map
+                    }
+                    if (currentRoom <= mapSize && currentRoom >= mapSize - mapSizeSqr)
+                    {
+                        GenerateBarrier(); // Top of map
+                    }
+
+                    break;
                 }
+                currentRoom++;
                 currentPosTracker++; // Keeps track of the position X, without using the room size
                 currentPosX += roomSize; // Adds more position to the currenPosX, which makes it go to the right a bit more
             }
@@ -111,7 +135,7 @@ public class GenerationManager : MonoBehaviour
 
                     int _roomToReplace = Random.Range(0, GeneratedRooms.Count);
                     
-                    GameObject spawnRoom = Instantiate(SpawnRoom, GeneratedRooms[_roomToReplace].transform.position, Quaternion.identity, WorldGrid);
+                    spawnRoom = Instantiate(SpawnRoom, GeneratedRooms[_roomToReplace].transform.position, Quaternion.identity, WorldGrid);
 
                     Destroy(GeneratedRooms[_roomToReplace]);
 
@@ -122,14 +146,68 @@ public class GenerationManager : MonoBehaviour
         }
     }
 
+    public GameObject spawnRoom;
+
+    public void SpawnPlayer()
+    {
+        PlayerObject.SetActive(false);
+        PlayerCanvas.SetActive(false);
+
+        PlayerObject.transform.position = new Vector3(spawnRoom.transform.position.x, 3f, spawnRoom.transform.position.z);
+
+        PlayerObject.SetActive(true);
+        PlayerCanvas.SetActive(true);
+
+        MainCameraObject.SetActive(false);
+        MainCanvas.SetActive(false);
+    }
+
+    public void DisablePlayer()
+    {
+        MainCameraObject.SetActive(true);
+        MainCanvas.SetActive(true);
+        
+        PlayerObject.SetActive(false);
+        PlayerCanvas.SetActive(false);
+        
+        Cursor.lockState = CursorLockMode.None;
+
+        Cursor.visible = true;
+        
+        Debug.Log("Player disabled");
+    }
+
     public void NextState()
     {
         currentState++; // Goes to the next state
 
         // Resetting our variables
+        currentRoom = 0;
         currentPosX = 0;
         currentPosZ = 0;
         currentPosTracker = 0;
         currentPos = Vector3.zero;
+    }
+
+    public void WinGame()
+    {
+        MainCameraObject.SetActive(true);
+        MainCanvas.SetActive(true);
+        
+        PlayerObject.SetActive(false);
+        PlayerCanvas.SetActive(false);
+        
+        Cursor.lockState = CursorLockMode.None;
+
+        Cursor.visible = true;
+
+        Debug.Log("Player got out of the backrooms");
+    }
+
+    public void GenerateBarrier()
+    {
+        currentPos = new(currentPosX, 0, currentPosZ);
+
+        Instantiate(B_Room, currentPos, Quaternion.identity, WorldGrid);
     }
 }
