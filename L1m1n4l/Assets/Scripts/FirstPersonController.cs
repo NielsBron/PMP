@@ -52,6 +52,8 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private AudioClip[] metalClips = default;
     [SerializeField] private AudioClip[] woodClips = default;
     [SerializeField] private AudioClip[] cementClips = default;
+    [SerializeField] private AudioClip[] dirtClips = default;
+    [SerializeField] private AudioClip[] waterClips = default;
     [SerializeField] private AudioClip[] grassClips = default;
     private float footstepTimer = 0;
     private float GetCurrentOffset => IsSprinting ? baseStepSpeed * sprintStepMultiplier : baseStepSpeed;
@@ -90,7 +92,7 @@ public class FirstPersonController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        currentStamina = maxStamina;   
+        currentStamina = maxStamina;
     }
 
     
@@ -118,13 +120,6 @@ public class FirstPersonController : MonoBehaviour
 
 
             ApplyFinalMovements();
-        }
-            
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            gameObject.GetComponent<FirstPersonController>().enabled = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
         }
     }
 
@@ -226,6 +221,12 @@ public class FirstPersonController : MonoBehaviour
                         break;
                     case "FootSteps/GRASS":
                         footstepAudioSource.PlayOneShot(grassClips[UnityEngine.Random.Range(0, grassClips.Length -1)]);
+                        break;
+                    case "FootSteps/DIRT":
+                        footstepAudioSource.PlayOneShot(dirtClips[UnityEngine.Random.Range(0, dirtClips.Length -1)]);
+                        break;
+                    case "FootSteps/WATER":
+                        footstepAudioSource.PlayOneShot(waterClips[UnityEngine.Random.Range(0, waterClips.Length -1)]);
                         break;
                     default:
                         footstepAudioSource.PlayOneShot(cementClips[UnityEngine.Random.Range(0, cementClips.Length -1)]);

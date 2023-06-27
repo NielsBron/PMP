@@ -7,6 +7,9 @@ TagManager:
   - FootSteps/METAL
   - FootSteps/GRASS
   - FootSteps/WOOD
+  - FootSteps/WATER
+  - FootSteps/DIRT
+  - FootSteps/CEMENT
   layers:
   - Default
   - TransparentFX

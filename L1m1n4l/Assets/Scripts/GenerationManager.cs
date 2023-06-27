@@ -204,17 +204,8 @@ public class GenerationManager : MonoBehaviour
 
     public void WinGame()
     {
-        MainCameraObject.SetActive(true);
-        MainCanvas.SetActive(true);
-        
-        PlayerObject.SetActive(false);
-        PlayerCanvas.SetActive(false);
-        
-        Cursor.lockState = CursorLockMode.None;
-
-        Cursor.visible = true;
-
-        Debug.Log("Player got out of the backrooms");
+        SceneManager.LoadScene(2);
+        Debug.Log("Player got out of level 01");
     }
 
     public void GenerateBarrier()
