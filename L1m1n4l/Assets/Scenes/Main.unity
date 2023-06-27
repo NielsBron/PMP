@@ -24,7 +24,7 @@ RenderSettings:
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
@@ -431,7 +431,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 18
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 13
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2048,6 +2048,7 @@ MonoBehaviour:
   - {fileID: 6732255300025882323, guid: 884caaaedf0ce1842a6e9aa62cfd1993, type: 3}
   LightTypes:
   - {fileID: 5078985066407981892, guid: 4790d2357eac635409a50be01cd9f88e, type: 3}
+  - {fileID: 5078985066407981892, guid: 03b0f3946d2854341b3cdf0502e16ae6, type: 3}
   mapSize: 16
   MapSizeSlider: {fileID: 1778167470}
   EmptinessSlider: {fileID: 381014187}
@@ -2058,6 +2059,8 @@ MonoBehaviour:
   SpawnRoom: {fileID: 6732255300025882323, guid: 40da33f5df933304a92699a5a50e5140,
     type: 3}
   ExitRoom: {fileID: 6732255300025882323, guid: c87554f6e57c5384a9b111373c4faeeb,
+    type: 3}
+  ChairRoom: {fileID: 6732255300025882323, guid: 2ccbbe6f5cbdc7d4fbd1b70118079df0,
     type: 3}
   GeneratedRooms: []
   PlayerObject: {fileID: 316287799665996129}
@@ -3494,8 +3497,8 @@ Camera:
   m_GameObject: {fileID: 316287799555455735}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -4011,7 +4014,7 @@ GameObject:
   - component: {fileID: 1723727231427062709}
   - component: {fileID: 1723727231427062603}
   - component: {fileID: 1723727231427062708}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: TimeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4038,7 +4041,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sep. 01 2004
+  m_text: Sep. 11 2001
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c599d389d23098b43b8d5de5f5c70534, type: 2}
   m_sharedMaterial: {fileID: -6540571298153069448, guid: c599d389d23098b43b8d5de5f5c70534,
@@ -4139,7 +4142,7 @@ GameObject:
   - component: {fileID: 1723727231494053937}
   - component: {fileID: 1723727231494053943}
   - component: {fileID: 1723727231494053936}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: DateText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4185,7 +4188,7 @@ GameObject:
   - component: {fileID: 1723727232003182048}
   - component: {fileID: 1723727232003182054}
   - component: {fileID: 1723727232003182055}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: AM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4368,7 +4371,7 @@ GameObject:
   - component: {fileID: 1723727232056198463}
   - component: {fileID: 1723727232056198456}
   - component: {fileID: 1723727232056198457}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: RecordingImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4513,7 +4516,7 @@ GameObject:
   - component: {fileID: 1723727232254228226}
   - component: {fileID: 1723727232254228224}
   - component: {fileID: 1723727232254228225}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: RecordingText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4572,7 +4575,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1723727232259689665}
   - component: {fileID: 1723727232259689664}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,6 +12,7 @@ public enum GenerationState
 
     GeneratingSpawn,
     GeneratingExit,
+    GeneratingChair,
 
     GeneratingBarrier
 }
@@ -27,7 +28,7 @@ public class GenerationManager : MonoBehaviour
     [SerializeField] Button GenerateButton;
     [SerializeField] GameObject E_Room;
     [SerializeField] GameObject B_Room; // Barrier room type
-    [SerializeField] GameObject SpawnRoom, ExitRoom;
+    [SerializeField] GameObject SpawnRoom, ExitRoom, ChairRoom;
 
     public List<GameObject> GeneratedRooms; // Storing the rooms that were already generated
 
@@ -67,7 +68,7 @@ public class GenerationManager : MonoBehaviour
 
         GenerateButton.interactable = false;
 
-        for (int state = 0; state < 6; state++)
+        for (int state = 0; state < 7; state++)
         {
             for (int i = 0; i < mapSize; i++)
             {
@@ -140,6 +141,18 @@ public class GenerationManager : MonoBehaviour
                     Destroy(GeneratedRooms[_roomToReplace]);
 
                     GeneratedRooms[_roomToReplace] = spawnRoom;
+                   
+                    break;
+                
+                case GenerationState.GeneratingChair:
+
+                    int __roomToReplace = Random.Range(0, GeneratedRooms.Count);
+                    
+                    GameObject chairRoom = Instantiate(ChairRoom, GeneratedRooms[__roomToReplace].transform.position, Quaternion.identity, WorldGrid);
+
+                    Destroy(GeneratedRooms[__roomToReplace]);
+
+                    GeneratedRooms[__roomToReplace] = chairRoom;
                    
                     break;
             }
